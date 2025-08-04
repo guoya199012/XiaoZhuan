@@ -3,6 +3,8 @@ package com.xigong.xiaozhuan.channel.huawei
 import com.xigong.xiaozhuan.channel.VersionParams
 import com.xigong.xiaozhuan.log.AppLogger
 import com.xigong.xiaozhuan.log.action
+import com.xigong.xiaozhuan.page.home.ApkPageState
+import com.xigong.xiaozhuan.page.home.ApkPageState.Companion
 import com.xigong.xiaozhuan.util.ApkInfo
 import com.xigong.xiaozhuan.util.ProgressChange
 import kotlinx.coroutines.delay
@@ -41,7 +43,7 @@ class HuaweiConnectClient {
         val bindResult = bindApk(clientId, token, appId, file, uploadUrl)
         waitApkReady(clientId, token, appId, bindResult)
         modifyUpdateDesc(clientId, token, appId, versionParams.updateDesc)
-        submit(clientId, token, appId, versionParams.onlineTime)
+//        submit(clientId, token, appId, versionParams.onlineTime)
 
     }
 

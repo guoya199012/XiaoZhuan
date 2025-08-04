@@ -35,6 +35,7 @@ fun ChannelUploadState(name: String, state: SubmitState, modifier: Modifier = Mo
         Column {
             Spacer(Modifier.height(10.dp))
             Text(name, color = AppColors.fontBlack, fontSize = 14.sp)
+            Text(name, color = AppColors.fontBlack, fontSize = 14.sp)
             val stateDesc = when (state) {
                 is SubmitState.Waiting -> "等待中"
                 is SubmitState.Processing -> "处理中"

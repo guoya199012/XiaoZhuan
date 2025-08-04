@@ -15,7 +15,7 @@ import kotlin.time.toJavaDuration
 // 有几个平台的接口响应非常慢，所以这个时间要设置的大一些
 private val timeout = 60.seconds.toJavaDuration()
 
-private const val DEBUG_NETWORK = false
+private const val DEBUG_NETWORK = true
 
 object OkHttpFactory {
 
@@ -31,19 +31,19 @@ object OkHttpFactory {
 
 private fun debugClient(): OkHttpClient {
     val logging = HttpLoggingInterceptor().apply {
-        setLevel(BASIC)
+        setLevel(HttpLoggingInterceptor.Level.BODY)
     }
     // 配置代理，并信任所有证书
-    val sslContext = SSLContext.getInstance("SSL")
-    val trustManager = getTrustManager()
-    sslContext.init(null, arrayOf<TrustManager>(trustManager), null)
+//    val sslContext = SSLContext.getInstance("SSL")
+//    val trustManager = getTrustManager()
+//    sslContext.init(null, arrayOf<TrustManager>(trustManager), null)
     return OkHttpClient.Builder()
         .addInterceptor(logging)
         .readTimeout(timeout)
         .writeTimeout(timeout)
-        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(8080)))
-        .sslSocketFactory(sslContext.socketFactory, trustManager)
-        .hostnameVerifier { _, _ -> true }
+//        .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(8080)))
+//        .sslSocketFactory(sslContext.socketFactory, trustManager)
+//        .hostnameVerifier { _, _ -> true }
         .build()
 }
 

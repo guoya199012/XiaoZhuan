@@ -9,7 +9,8 @@ object BuildConfig {
 
     private val config = loadBuildConfig()
 
-    val debug: Boolean = !config.get("release").asBoolean
+//    val debug: Boolean = !config.get("release").asBoolean
+    val debug: Boolean = true
 
     val versionCode: Long = config.get("versionCode").asLong
 

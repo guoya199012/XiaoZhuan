@@ -2,7 +2,9 @@ package com.xigong.xiaozhuan.page.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -33,48 +35,85 @@ fun ApkPage(apkVM: ApkPageState, startUpload: (UploadParam) -> Unit) {
 @Composable
 private fun ColumnScope.LeftPage(apkConfig: ApkConfig, viewModel: ApkPageState) {
     val dividerHeight = 30.dp
-    Section("Apk信息") {
-        ApkInfoBox(apkConfig)
-    }
-    Spacer(Modifier.height(dividerHeight))
-    Section("选择文件") {
-
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(AppColors.cardBackground)
-                .padding(16.dp)
-        ) {
-            val apkInfo = viewModel.getApkInfoState().value
-            val version = apkInfo?.versionName?.let { "v${it}" }
-            val apkPath = viewModel.getApkDirState().value?.path ?: ""
-            item("文件:", apkPath ?: "")
-            Spacer(Modifier.height(12.dp))
-            item("版本:", version ?: "")
-
-            Spacer(Modifier.height(12.dp))
-            item("大小:", viewModel.getFileSize())
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
+        Section("Apk信息") {
+            ApkInfoBox(apkConfig)
         }
-        Spacer(Modifier.height(12.dp))
-        Button(
-            colors = ButtonDefaults.outlinedButtonColors(
-                backgroundColor = AppColors.primary,
-            ),
-            onClick = {
-                if (apkConfig.enableChannel) {
-                    viewModel.selectedApkDir()
-                } else {
-                    viewModel.selectApkFile()
-                }
-            }) {
-            val text = if (apkConfig.enableChannel) "选择Apk文件夹" else "选择Apk文件"
-            Text(text, color = Color.White, fontSize = 14.sp)
+        Spacer(Modifier.height(dividerHeight))
+        Section("选择64位文件") {
+
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(AppColors.cardBackground)
+                    .padding(16.dp)
+            ) {
+                val apkInfo = viewModel.getApkInfoState().value
+                val version = apkInfo?.versionName?.let { "v${it}" }
+                val apkPath = viewModel.getApkDirState().value?.path ?: ""
+                item("文件:", apkPath ?: "")
+                Spacer(Modifier.height(12.dp))
+                item("版本:", version ?: "")
+
+                Spacer(Modifier.height(12.dp))
+                item("大小:", viewModel.getFileSize())
+            }
+            Spacer(Modifier.height(12.dp))
+            Button(
+                colors = ButtonDefaults.outlinedButtonColors(
+                    backgroundColor = AppColors.primary,
+                ),
+                onClick = {
+                    if (apkConfig.enableChannel) {
+                        viewModel.selectedApkDir()
+                    } else {
+                        viewModel.selectApkFile()
+                    }
+                }) {
+                val text = if (apkConfig.enableChannel) "选择Apk文件夹" else "选择Apk文件"
+                Text(text, color = Color.White, fontSize = 14.sp)
+            }
         }
 
-    }
-    Spacer(Modifier.height(dividerHeight))
-    Section("更新描述") {
-        UpdateDescView(viewModel.updateDesc)
+        Spacer(Modifier.height(dividerHeight))
+
+        Section("选择32位文件") {
+
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(AppColors.cardBackground)
+                    .padding(16.dp)
+            ) {
+                val apkInfo = viewModel.getApkInfoState(true).value
+                val version = apkInfo?.versionName?.let { "v${it}" }
+                val apkPath = viewModel.getApkDirState(true).value?.path ?: ""
+                item("文件:", apkPath ?: "")
+                Spacer(Modifier.height(12.dp))
+                item("版本:", version ?: "")
+
+                Spacer(Modifier.height(12.dp))
+                item("大小:", viewModel.getFileSize(true))
+            }
+            Spacer(Modifier.height(12.dp))
+            Button(
+                colors = ButtonDefaults.outlinedButtonColors(
+                    backgroundColor = AppColors.primary,
+                ),
+                onClick = {
+                    viewModel.selectApkFile(true)
+                }) {
+                val text = "选择Apk文件"
+                Text(text, color = Color.White, fontSize = 14.sp)
+            }
+        }
+
+        Spacer(Modifier.height(dividerHeight))
+        Section("更新描述") {
+            UpdateDescView(viewModel.updateDesc)
+        }
     }
 }
 

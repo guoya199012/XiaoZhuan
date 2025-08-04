@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xigong.xiaozhuan.channel.MarketState
+import com.xigong.xiaozhuan.log.AppLogger
 import com.xigong.xiaozhuan.page.upload.UploadParam
 import com.xigong.xiaozhuan.style.AppColors
 import com.xigong.xiaozhuan.style.AppShapes

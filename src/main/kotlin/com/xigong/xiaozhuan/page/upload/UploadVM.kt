@@ -56,9 +56,14 @@ class UploadVM(
 
     private suspend fun List<TaskLauncher>.executeUpload() {
         val file = File(uploadParam.apkFile)
+        val file32 = File(uploadParam.apk32File)
         forEach {
             it.setChannelParam(getApkConfig().channels)
-            it.selectFile(file)
+            if (it.isArmv7()) {
+                it.selectFile(file32, true)
+            } else {
+                it.selectFile(file, false)
+            }
             it.prepare()
         }
         val updateDesc = uploadParam.updateDesc.trim()

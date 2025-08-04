@@ -1,6 +1,7 @@
 package com.xigong.xiaozhuan.channel
 
 import com.xigong.xiaozhuan.BuildConfig
+import com.xigong.xiaozhuan.channel.armv7.Huawei32ChannelTask
 import com.xigong.xiaozhuan.channel.honor.HonorChannelTask
 import com.xigong.xiaozhuan.channel.huawei.HuaweiChannelTask
 import com.xigong.xiaozhuan.channel.mi.MiChannelTask
@@ -12,6 +13,7 @@ private const val DEBUG_TASK = false
 object ChannelRegistry {
 
     private val realChannels: List<ChannelTask> = listOf(
+        Huawei32ChannelTask(),
         HuaweiChannelTask(),
         MiChannelTask(),
         OPPOChannelTask(),

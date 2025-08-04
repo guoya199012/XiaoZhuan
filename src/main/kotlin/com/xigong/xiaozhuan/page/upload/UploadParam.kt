@@ -21,7 +21,10 @@ data class UploadParam(
      * 选中的Apk文件
      */
     val apkFile: String,
-
+    /**
+     * 选中的32 apk文件
+     */
+    val apk32File: String,
     /**
      * 定时发布的事件,为0 表示立即发布
      */

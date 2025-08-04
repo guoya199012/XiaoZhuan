@@ -28,6 +28,10 @@ class ApkPageState(val apkConfig: ApkConfig) {
 
     private val apkInfoState = mutableStateOf<ApkInfo?>(null)
 
+    private val apk32DirState = mutableStateOf<File?>(null)
+
+    private val apk32InfoState = mutableStateOf<ApkInfo?>(null)
+
     val updateDesc = mutableStateOf(apkConfig.extension.updateDesc ?: "")
 
 
@@ -65,19 +69,24 @@ class ApkPageState(val apkConfig: ApkConfig) {
     }
 
 
-    fun getApkDirState(): State<File?> = apkDirState
+    fun getApkDirState(armV7: Boolean = false): State<File?> = if (armV7) apk32DirState else apkDirState
 
-    fun getApkInfoState(): State<ApkInfo?> = apkInfoState
+    fun getApkInfoState(armV7: Boolean = false): State<ApkInfo?> = if (armV7) apk32InfoState else apkInfoState
 
-    private suspend fun parseApkFile(dir: File): Boolean {
+    private suspend fun parseApkFile(dir: File, armv7: Boolean): Boolean {
         return try {
             val apkFile = if (dir.isDirectory) AppPath.listApk(dir).first() else dir
             taskLaunchers.forEach {
                 it.setChannelParam(apkConfig.channels)
-                it.selectFile(dir)
+                it.selectFile(dir, armv7)
             }
-            apkInfoState.value = getApkInfo(apkFile)
-            apkDirState.value = dir
+            if (armv7) {
+                apk32InfoState.value = getApkInfo(apkFile)
+                apk32DirState.value = dir
+            } else {
+                apkInfoState.value = getApkInfo(apkFile)
+                apkDirState.value = dir
+            }
             updateSelectChannel()
             true
         } catch (e: Exception) {
@@ -212,6 +221,7 @@ class ApkPageState(val apkConfig: ApkConfig) {
 
     fun startDispatch(): UploadParam? {
         val file = getApkDirState().value
+        val file32 = getApkDirState(true).value
         if (file == null) {
             Toast.show("请选择Apk文件")
             return null
@@ -243,6 +253,7 @@ class ApkPageState(val apkConfig: ApkConfig) {
             updateDesc = updateDesc,
             channels = channels,
             apkFile = file.absolutePath,
+            apk32File = file32?.absolutePath ?: "",
             onlineTime = releaseDate
         )
     }
@@ -261,8 +272,8 @@ class ApkPageState(val apkConfig: ApkConfig) {
         return time
     }
 
-    fun getFileSize(): String {
-        val apkInfo = getApkInfoState().value ?: return ""
+    fun getFileSize(armV7: Boolean = false): String {
+        val apkInfo = getApkInfoState(armV7).value ?: return ""
         val file = File(apkInfo.path)
         return FileUtil.getFileSize(file)
     }
@@ -271,17 +282,17 @@ class ApkPageState(val apkConfig: ApkConfig) {
     fun selectedApkDir() {
         scope.launch {
             val dir = FileSelector.selectedDir(getLastApkDir())
-            if (dir != null && !parseApkFile(dir)) {
+            if (dir != null && !parseApkFile(dir, false)) {
                 Toast.show("无效目录,未包含有效的Apk文件")
             }
         }
     }
 
 
-    fun selectApkFile() {
+    fun selectApkFile(armV7: Boolean = false) {
         scope.launch {
             val file = FileSelector.selectedFile(getLastApkDir(), "*.apk", listOf("apk"))
-            if (file != null && !parseApkFile(file)) {
+            if (file != null && !parseApkFile(file, armV7)) {
                 Toast.show("无效的Apk文件")
             }
         }

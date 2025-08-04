@@ -8,7 +8,7 @@ import com.xigong.xiaozhuan.util.ApkInfo
 import java.io.File
 import kotlin.math.roundToInt
 
-class HuaweiChannelTask : ChannelTask() {
+open class HuaweiChannelTask : ChannelTask() {
 
     override val channelName: String = "华为"
 

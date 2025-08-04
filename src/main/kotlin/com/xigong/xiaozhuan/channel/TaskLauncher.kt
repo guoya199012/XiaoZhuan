@@ -12,11 +12,15 @@ class TaskLauncher(private val task: ChannelTask) {
 
     val name = task.channelName
 
+    val taskId = task.fileNameIdentify
+
     private val stateListener = SubmitStateAdapter(::updateState)
 
     private var channelParams: List<ApkConfig.Channel> = emptyList()
 
     private val apkFileState: MutableState<File?> = mutableStateOf(null)
+
+    private val apk32FileState: MutableState<File?> = mutableStateOf(null)
 
     private val submitState: MutableState<SubmitState?> = mutableStateOf(null)
 
@@ -27,9 +31,13 @@ class TaskLauncher(private val task: ChannelTask) {
 
     }
 
-    fun selectFile(apkDir: File) {
+    fun selectFile(apkDir: File, armv7: Boolean) {
         val apkFile = if (apkDir.isDirectory) findApkFile(apkDir) else apkDir
-        apkFileState.value = apkFile
+        if (armv7) {
+            apk32FileState.value = apkFile
+        } else {
+            apkFileState.value = apkFile
+        }
     }
 
     fun prepare() {
@@ -37,10 +45,15 @@ class TaskLauncher(private val task: ChannelTask) {
     }
 
     suspend fun startSubmit(versionParams: VersionParams) {
-        val apkFile = requireNotNull(apkFileState.value)
         initParams()
         task.setSubmitStateListener(stateListener)
-        task.startUpload(apkFile, versionParams)
+        if (isArmv7()) {
+            val apk32File = requireNotNull(apk32FileState.value)
+            task.startUpload(apk32File, versionParams)
+        } else {
+            val apkFile = requireNotNull(apkFileState.value)
+            task.startUpload(apkFile, versionParams)
+        }
     }
 
     suspend fun loadMarketState(applicationId: String) {
@@ -67,7 +80,7 @@ class TaskLauncher(private val task: ChannelTask) {
     }
 
 
-    fun getApkFileState(): State<File?> = apkFileState
+    fun getApkFileState(): State<File?> = if (isArmv7()) apk32FileState else apkFileState
 
     fun getSubmitState(): State<SubmitState?> = submitState
 
@@ -92,6 +105,10 @@ class TaskLauncher(private val task: ChannelTask) {
 
     private fun updateState(newState: SubmitState) {
         submitState.value = newState
+    }
+
+    fun isArmv7(): Boolean {
+        return "HUAWEI32" == task.fileNameIdentify
     }
 
 }
