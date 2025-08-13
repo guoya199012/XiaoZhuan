@@ -16,11 +16,11 @@ open class HuaweiChannelTask : ChannelTask() {
 
     override val paramDefine: List<Param> = listOf(CLIENT_ID, CLIENT_SECRET)
 
-    private val connectClient = HuaweiConnectClient()
+    val connectClient = HuaweiConnectClient()
 
-    private var clientId = ""
+    var clientId = ""
 
-    private var clientSecret = ""
+    var clientSecret = ""
 
     override fun init(params: Map<Param, String?>) {
         clientId = params[CLIENT_ID] ?: ""
@@ -28,7 +28,7 @@ open class HuaweiChannelTask : ChannelTask() {
     }
 
     override suspend fun performUpload(file: File, apkInfo: ApkInfo, versionParams: VersionParams, progress: (Int) -> Unit) {
-        connectClient.uploadApk(file, apkInfo, clientId, clientSecret, versionParams) {
+        connectClient.uploadApk(file, apkInfo, clientId, clientSecret, versionParams, true) {
             progress((it * 100).roundToInt())
         }
     }

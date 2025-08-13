@@ -9,6 +9,7 @@ import com.xigong.xiaozhuan.util.getJsonResult
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.xigong.xiaozhuan.channel.VersionParams
+import com.xigong.xiaozhuan.log.AppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody

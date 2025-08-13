@@ -33,7 +33,8 @@ class HuaweiConnectClient {
         clientId: String,
         clientSecret: String,
         versionParams: VersionParams,
-        progressChange: ProgressChange
+        isSubmit: Boolean,
+        progressChange: ProgressChange,
     ): Unit = AppLogger.action(LOG_TAG, "提交新版本") {
         val rawToken = getToken(clientId, clientSecret)
         val token = "Bearer $rawToken"
@@ -43,7 +44,9 @@ class HuaweiConnectClient {
         val bindResult = bindApk(clientId, token, appId, file, uploadUrl)
         waitApkReady(clientId, token, appId, bindResult)
         modifyUpdateDesc(clientId, token, appId, versionParams.updateDesc)
-//        submit(clientId, token, appId, versionParams.onlineTime)
+        if (isSubmit) {
+            submit(clientId, token, appId, versionParams.onlineTime)
+        }
 
     }
 
